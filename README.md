@@ -420,24 +420,6 @@ https://github.com/vncsqxy
 
 ---
 
-# 🤝 Contribuições
-
-1. Faça um fork
-2. Crie uma branch
-3. Commit suas alterações
-4. Faça push
-5. Abra um Pull Request
-
----
-
-# 📄 Licença
-
-MIT License
-
----
-
-<div align="center">
-
 ### Projeto desenvolvido com foco em arquitetura limpa, concorrência segura e processamento assíncrono.
 
 </div>
