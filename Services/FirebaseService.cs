@@ -11,7 +11,7 @@ namespace PokeData.IngestionApp.Services
 
         public FirebaseService()
         {
-            // A URL base do seu banco no Firebase
+            
             _client = new RestClient("https://bancopokeapi-default-rtdb.firebaseio.com/");
         }
 

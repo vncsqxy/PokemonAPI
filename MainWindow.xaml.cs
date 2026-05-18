@@ -9,14 +9,16 @@ namespace PokeData.IngestionApp
     public partial class MainWindow : Window
     {
         private readonly PokeApiService _pokeApiService;
-        private readonly FirebaseService _firebaseService; // Adicionamos o Firebase aqui
+        private readonly FirebaseService _firebaseService;
+        private readonly ErickApiService _erickApiService;
         private PokemonModel _pokemonAtual;
 
         public MainWindow()
         {
             InitializeComponent();
             _pokeApiService = new PokeApiService();
-            _firebaseService = new FirebaseService(); // Iniciamos o Firebase aqui
+            _firebaseService = new FirebaseService();
+            _erickApiService = new ErickApiService();
         }
 
         private async void btnBuscar_Click(object sender, RoutedEventArgs e)
@@ -78,7 +80,7 @@ namespace PokeData.IngestionApp
             }
         }
 
-        // --- MUDANÇA AQUI: Botão de salvar agora é assíncrono (async) e chama o Firebase ---
+        // --- BOTÃO 1: Salva no seu Firebase Pessoal ---
         private async void btnSalvar_Click(object sender, RoutedEventArgs e)
         {
             if (_pokemonAtual == null)
@@ -92,11 +94,11 @@ namespace PokeData.IngestionApp
                 btnSalvar.IsEnabled = false;
                 txtStatus.Text = "Enviando dados para o Firebase...";
 
-                // Manda o pokemon atual para a nuvem!
+                // Manda o pokemon atual para a sua nuvem
                 await _firebaseService.SalvarPokemonAsync(_pokemonAtual);
 
-                MessageBox.Show($"{_pokemonAtual.Nome.ToUpper()} salvo na nuvem com sucesso!", "Sucesso", MessageBoxButton.OK, MessageBoxImage.Information);
-                txtStatus.Text = "Sincronizado com a nuvem!";
+                MessageBox.Show($"{_pokemonAtual.Nome.ToUpper()} salvo no seu Firebase com sucesso!", "Sucesso", MessageBoxButton.OK, MessageBoxImage.Information);
+                txtStatus.Text = "Sincronizado com o seu Firebase!";
             }
             catch (Exception ex)
             {
@@ -106,6 +108,37 @@ namespace PokeData.IngestionApp
             finally
             {
                 btnSalvar.IsEnabled = true;
+            }
+        }
+
+        // --- BOTÃO 2: Salva na API do membro Erick (Google Cloud) ---
+        private async void btnSalvarErick_Click(object sender, RoutedEventArgs e)
+        {
+            if (_pokemonAtual == null)
+            {
+                MessageBox.Show("Busque um Pokémon primeiro antes de tentar salvar!", "Aviso", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            try
+            {
+                btnSalvarErick.IsEnabled = false;
+                txtStatus.Text = "Enviando dados para a API do Erick (Google Cloud)...";
+
+                // Envia para o serviço do parceiro de squad
+                await _erickApiService.EnviarParaCoreApiAsync(_pokemonAtual);
+
+                MessageBox.Show($"{_pokemonAtual.Nome.ToUpper()} enviado para a API do Erick com sucesso!", "Sucesso", MessageBoxButton.OK, MessageBoxImage.Information);
+                txtStatus.Text = "Sincronizado com o ecossistema do Erick!";
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Erro ao integrar com a API do Erick: {ex.Message}", "Erro de Integração", MessageBoxButton.OK, MessageBoxImage.Error);
+                txtStatus.Text = "Falha ao enviar para o parceiro.";
+            }
+            finally
+            {
+                btnSalvarErick.IsEnabled = true;
             }
         }
     }
